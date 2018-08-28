@@ -40,10 +40,49 @@ sc.stop()
 ### Using pyspark with Jupyter notebook
 There are 2 approaches to using Jupyter notebooks:
 
-1) [Jupyter notebook only - local Spark cluster](#jupyter-notebook-only-local-spark-cluster) - Setting up so pyspark will always run Jupyter notebook and you'll have access to Spark functions within it - suitable if you will always use Jupyter notebooks for running your code, and don't need the power of a remote spark cluster
-1) [Jupyter notebook or IDE of choice - local Spark cluster](#jupyter-notebook-or-ide-of-choice-local-spark-cluster) - Setting up to find your local cluster - useful if you don't need the power of a remote spark cluster. You can use this with Jupyter notebooks or with your IDE of choice
-1) [Jupyter notebook or IDE of choice - remote Spark cluster](#jupyter-notebook-or-ide-of-choice-remote-spark-cluster) - Setting up to connect to a remote cluster - useful if you need the power of a remote cluster
+1) [Jupyter notebook only - local Spark cluster](#jupyter-notebook-only-local-spark-cluster) - 
+Setting up so pyspark will always run Jupyter notebook and you'll have access to Spark functions within it - suitable 
+if you will always use Jupyter notebooks for running your code, and don't need the power of a remote spark cluster
+1) [Jupyter notebook or IDE of choice - local Spark cluster](#jupyter-notebook-or-ide-of-choice-local-spark-cluster) - 
+Setting up to find your local cluster - useful if you don't need the power of a remote spark cluster. You can use this 
+with Jupyter notebooks or with your IDE of choice
+1) [Jupyter notebook or IDE of choice - remote Spark cluster](#jupyter-notebook-or-ide-of-choice-remote-spark-cluster) - 
+Setting up to connect to a remote cluster - useful if you need the power of a remote cluster
 
 #### Jupyter notebook only local Spark cluster
+Add the following exports to your ~/.bashrc file:
+```
+# Use jupyter notebooks to run spark
+export PYSPARK_DRIVER_PYTHON=jupyter
+export PYSPARK_DRIVER_PYTHON_OPTS='notebook'
+```
+Now when you run pyspark it will open up a jupyter notebook with access to a spark context (core part of the spark API).
+
 #### Jupyter notebook or IDE of choice local Spark cluster
+In any Jupyter notebook or IDE you can very easily setup to give access to a local Spark context too. First install
+findspark and open up a Jupyter notebook (or your IDE of choice)
+```
+pip install findspark
+jupyter notebook
+```
+Within the notebook (or IDE) add the following code to the top of your file:
+```
+import findspark
+findspark.init()
+import pyspark
+import random
+sc = pyspark.SparkContext(appName="myAppNameGoesHere")
+```
+You'll now be able to run Spark commands, simples!
+
 #### Jupyter notebook or IDE of choice remote Spark cluster
+**WARNING - this section hasn't been tested with a remote cluster yet!!**
+Similar to the last snippet, except explicitly setting the Spark cluster to connect to. Just add the following
+to your Jupyter notebook or code in your IDE:
+```
+import findspark
+findspark.init()
+import pyspark
+conf = pyspark.SparkConf().setMaster("local").setAppName("My App") # Replace local with your remote Spark cluster address
+sc = pyspark.SparkContext(conf = conf)
+```
